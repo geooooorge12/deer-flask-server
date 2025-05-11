@@ -1,15 +1,21 @@
 from flask import Flask, jsonify
 import os
+import json
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return '서버가 정상적으로 작동 중입니다.'
+    directory = 'json_files'
+    try:
+        files = [f for f in os.listdir(directory) if f.endswith('.json')]
+        return jsonify({"message": "JSON 목록입니다.", "files": files})
+    except FileNotFoundError:
+        return jsonify({"error": "json_files 폴더가 없습니다."}), 404
 
 @app.route('/files')
 def list_files():
-    directory = 'json_files'  # 실제 json 파일 폴더 경로
+    directory = 'json_files'
     try:
         files = [f for f in os.listdir(directory) if f.endswith('.json')]
         return jsonify(files)
